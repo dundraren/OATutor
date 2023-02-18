@@ -26,10 +26,13 @@ class HintSystem extends React.Component {
         this.giveStuFeedback = props.giveStuFeedback
         this.state = {
             latestStep: 0,
-            currentExpanded: -1,
+            currentExpanded: 0,
             hintAnswer: "",
             showSubHints: new Array(this.props.hints.length).fill(false),
             subHintsFinished: subHintsFinished
+        }
+        if (this.props.hintStatus.length > 0) {
+            this.props.unlockHint(0, this.props.hints[0].type);
         }
     }
 
@@ -116,7 +119,7 @@ class HintSystem extends React.Component {
                     <Accordion key={i}
                         onChange={(event, expanded) => this.unlockHint(event, expanded, i)}
                         disabled={this.isLocked(i) && !(use_expanded_view && debug)}
-                        expanded={currentExpanded === i || (use_expanded_view && debug)}
+                        expanded={currentExpanded === i || (use_expanded_view != null && use_expanded_view && debug)}
                         defaultExpanded={false}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon/>}
