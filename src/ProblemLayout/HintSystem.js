@@ -23,15 +23,16 @@ class HintSystem extends React.Component {
             subHintsFinished.push(new Array((this.props.hints[i].subHints !== undefined ? this.props.hints[i].subHints.length : 0)).fill(0));
         }
 
-        this.giveStuFeedback = props.giveStuFeedback
+        this.giveStuFeedback = props.giveStuFeedback;
+        this.unlockFirstHint = props.unlockFirstHint;
         this.state = {
             latestStep: 0,
-            currentExpanded: 0,
+            currentExpanded: this.unlockFirstHint ? 0 : -1,
             hintAnswer: "",
             showSubHints: new Array(this.props.hints.length).fill(false),
             subHintsFinished: subHintsFinished
         }
-        if (this.props.hintStatus.length > 0) {
+        if (this.unlockFirstHint && this.props.hintStatus.length > 0) {
             this.props.unlockHint(0, this.props.hints[0].type);
         }
     }
@@ -153,6 +154,7 @@ class HintSystem extends React.Component {
                                         <ErrorBoundary componentName={"SubHintSystem"}>
                                             <SubHintSystem
                                                 giveStuFeedback={this.giveStuFeedback}
+                                                unlockFirstHint={this.unlockFirstHint}
                                                 problemID={problemID}
                                                 hints={hint.subHints}
                                                 unlockHint={this.unlockSubHint}

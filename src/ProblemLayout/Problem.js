@@ -45,9 +45,11 @@ class Problem extends React.Component {
         const giveStuFeedback = this.props.lesson?.giveStuFeedback
         const giveStuHints = this.props.lesson?.giveStuHints
         const doMasteryUpdate = this.props.lesson?.doMasteryUpdate
+        const unlockFirstHint = this.props.lesson?.unlockFirstHint
         this.giveStuFeedback = giveStuFeedback == null || giveStuFeedback
         this.giveStuHints = giveStuHints == null || giveStuHints
         this.doMasteryUpdate = doMasteryUpdate == null || doMasteryUpdate
+        this.unlockFirstHint = unlockFirstHint != null && unlockFirstHint
 
         this.state = {
             problem: this.props.problem,
@@ -85,7 +87,7 @@ class Problem extends React.Component {
                 <ProblemCard problemID={problem.id} step={step} index={index} answerMade={this.answerMade}
                              seed={this.props.seed} problemVars={this.props.problem.variabilization}
                              lesson={problem.lesson} courseName={problem.courseName} giveStuFeedback={this.giveStuFeedback}
-                             giveStuHints={this.giveStuHints}
+                             giveStuHints={this.giveStuHints} unlockFirstHint={this.unlockFirstHint}
                 />
             </Element>
         })

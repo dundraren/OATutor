@@ -16,13 +16,14 @@ class SubHintSystem extends React.Component {
 
     constructor(props) {
         super(props);
-        this.giveStuFeedback = props.giveStuFeedback
+        this.giveStuFeedback = props.giveStuFeedback;
+        this.unlockFirstHint = props.unlockFirstHint;
         this.state = {
             latestStep: 0,
-            currentExpanded: 0,
+            currentExpanded: this.unlockFirstHint ? 0 : -1,
             hintAnswer: ""
         }
-        if (this.props.hintStatus.length > 0) {
+        if (this.unlockFirstHint && this.props.hintStatus.length > 0) {
             this.props.unlockHint(0, this.props.parent);
         }
     }
