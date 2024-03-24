@@ -10,11 +10,7 @@ import { ThemeContext } from '../../config/config.js';
 import ProblemInput from "../problem-input/ProblemInput";
 import { stagingProp } from "../../util/addStagingProperty";
 import { toastNotifyCorrectness } from "./ToastNotifyCorrectness";
-<<<<<<< HEAD:src/ProblemLayout/HintTextbox.js
-import { joinList } from "../util/formListString";
-=======
 import { joinList } from "../../util/formListString";
->>>>>>> 56e51aacdc4c4a08f3010436c8544fddb43d5446:src/components/problem-layout/HintTextbox.js
 
 class HintTextbox extends React.Component {
     static contextType = ThemeContext;
@@ -81,10 +77,7 @@ class HintTextbox extends React.Component {
         return (
             <div>
                 <ProblemInput
-<<<<<<< HEAD:src/ProblemLayout/HintTextbox.js
-=======
                     variabilization={chooseVariables(this.props.hintVars, this.props.seed)}
->>>>>>> 56e51aacdc4c4a08f3010436c8544fddb43d5446:src/components/problem-layout/HintTextbox.js
                     allowRetry={this.allowRetry}
                     giveStuFeedback={this.giveStuFeedback}
                     showCorrectness={this.showCorrectness}

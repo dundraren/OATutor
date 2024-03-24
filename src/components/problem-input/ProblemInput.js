@@ -81,11 +81,7 @@ class ProblemInput extends React.Component {
     }
 
     render() {
-<<<<<<< HEAD:src/ProblemLayout/ProblemInput/ProblemInput.js
-        const { classes, state, index, showCorrectness, allowRetry } = this.props;
-=======
         const { classes, state, index, showCorrectness, allowRetry, variabilization } = this.props;
->>>>>>> 56e51aacdc4c4a08f3010436c8544fddb43d5446:src/components/problem-input/ProblemInput.js
         const { use_expanded_view, debug } = this.context;
         let { problemType, stepAnswer, hintAnswer, units } = this.props.step;
         const keepMCOrder = this.props.keepMCOrder;
@@ -112,14 +108,6 @@ class ProblemInput extends React.Component {
                 <Grid item xs={1} md={problemType === "TextBox" ? 4 : false}/>
                 <Grid item xs={9} md={problemType === "TextBox" ? 3 : 12}>
                     {(problemType === "TextBox" && this.props.step.answerType !== "string") && (
-<<<<<<< HEAD:src/ProblemLayout/ProblemInput/ProblemInput.js
-                        <center
-                            ref={this.equationRef}
-                            className={clsx(showCorrectness && state.isCorrect === false && classes.textBoxLatexIncorrect, state.usedHints && classes.textBoxLatexUsedHint, classes.textBoxLatex)}
-                            {...stagingProp({
-                                "data-selenium-target": `arithmetic-answer-${index}`
-                            })}
-=======
                         <math-field 
                             onInput={evt => this.props.setInputValState(evt.target.value)}
                             style={{"display": "block"}}
@@ -127,7 +115,6 @@ class ProblemInput extends React.Component {
                             onChange={this.onEquationChange}
                             autoCommands={EQUATION_EDITOR_AUTO_COMMANDS}
                             autoOperatorNames={EQUATION_EDITOR_AUTO_OPERATORS}
->>>>>>> 56e51aacdc4c4a08f3010436c8544fddb43d5446:src/components/problem-input/ProblemInput.js
                         >
                             </math-field>
                         
