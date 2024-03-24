@@ -1,10 +1,44 @@
 # OATutor
 
-OATutor, formerly known as OpenITS, is an open source Intelligent Tutoring System using Bayesian Knowledge Tracing
-implemented in ReactJS and using Firebase for logging. Includes ExpressJS middleware for interoperability
-with LTI-compatible learning management systems (such as [Canvas](https://www.instructure.com/)).
+OATutor is an Open-source Adaptive Tutoring System (OAT) based on Intelligent Tutoring System principles. It uses Bayesian Knowledge Tracing for skill mastery estimation and is implemented entirely in React JS with optional logging using [Firebase](https://firebase.google.com/). 
+The system can be deployed to git-pages without the use of any backend. For LMS integration, 
+a middleware backend is required by Learning Tools Interoperability (LTI). Our [hosted backend server](https://cahlr.github.io/OATutor/#/posts/set-up-canvas-integration) can be used or the middleware can be launched independently. OATutor is Section 508 accessibility [compliant](https://cahlr.github.io/OATutor/static/documents/OATutor_Sec508_WCAG.pdf).
 
-> Jump to [OATutor Content](#oatutor-content)
+> [Quick clone and deploy notebook example](https://colab.research.google.com/drive/15rzSOLT8EtfJM_Ts1ZQZYuT-FvJp2SW1?usp=sharing)
+>
+> [Quick content authoring notebook example](https://colab.research.google.com/drive/11X3eW9cDnRcvROaCWglPM5VH0NRAXFKp?usp=sharing)
+>
+> [Sign-up for our mailinglist](https://forms.gle/9SedjDENmfhBM13v8)
+
+## Paper
+To credit this system, please cite our CHI'23 paper:
+
+Zachary A. Pardos, Matthew Tang, Ioannis Anastasopoulos, Shreya K. Sheel, and Ethan Zhang. 2023. OATutor: An Open-source Adaptive Tutoring System and Curated Content Library for Learning Sciences Research. In *Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems (CHI '23)*. Association for Computing Machinery, New York, NY, USA, Article 416, 1–17. [https://doi.org/10.1145/3544548.3581574](https://doi.org/10.1145/3544548.3581574)
+```
+@inproceedings{pardos2023oat,
+  title={OATutor: An Open-source Adaptive Tutoring System and Curated Content Library for Learning Sciences Research},
+  author={Pardos, Z.A., Tang, M., Anastasopoulos, I., Sheel, S.K., Zhang, E},
+  booktitle={Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems},
+  pages={1--17},
+  organization={Association for Computing Machinery},
+  doi={https://doi.org/10.1145/3544548.3581574},
+  year={2023}
+}
+```
+
+Our new pre-print, reporting preliminary finding on learning gains and ChatGPT-based hint evaluation: [https://arxiv.org/abs/2302.06871](https://arxiv.org/abs/2302.06871)
+
+### Creative Commons Attribution
+
+The content submodule repository includes three creative commons (CC BY) textbooks worth of algebra problems with tutoring supports in 
+the form of hints and scaffolds, authored and edited by the OATutor project, also released under CC BY 4.0.
+
+1. A subset of problems are derivatives of _OpenStax: Elementary Algebra_ by OpenStax, used under CC
+   BY 4.0
+2. A subset of problems are derivatives of _OpenStax: Intermediate Algebra_ by OpenStax, used under CC
+   BY 4.0
+3. A subset of problems are derivatives of _Openstax: College Algebra_ by OpenStax, used under CC
+   BY 4.0
 
 ## Requirements
 
@@ -13,7 +47,7 @@ The installation assumes that you already have Git, Node.js, and npm installed.
 ## Installation
 
 ```sh
-git clone https://github.com/CAHLR/OATutor.git
+git clone --recurse-submodules https://github.com/CAHLR/OATutor.git
 cd OATutor
 ```
 
@@ -37,6 +71,8 @@ npm run start
 npm run build
 npx serve -s build
 ```
+> The build folder now contains all of the static assets necessary to make a complete deployment on
+> a static site hosting provider.
 
 ### \[Optional\] Firebase Setup
 
@@ -52,7 +88,7 @@ OATutor can use Firebase to persistently store log data.
 
 1. Scaffolding/hint system - modularize the type of help
 2. Adaptive item selection - Pick items to master weakest skills (isolate skills to master individually)
-3. Centralized skill model - `src/config/skillModel.json`
+3. Centralized skill model - `src/content-sources/*/skillModel.json`
 4. Data logging/collection - Based off of the Cognitive Tutor KDD dataset.
 5. User login/registration - JSON Web Tokens
 
@@ -61,7 +97,7 @@ OATutor can use Firebase to persistently store log data.
 * Frontend: ReactJS
     * Theme: Material UI
     * Database: localForage (localStorage, WebSQL, IndexedDB)
-    * Deployment: Github Actions
+    * Deployment: Github Actions to Github Pages
     * \[Optional\] Logging: Firebase (Cloud Firestore)
 * Middleware: ExpressJS
     * Database: Level-DB
@@ -78,11 +114,19 @@ Code for this project is located in the `src` directory.
 - `App.js`: Top level script, creates firebase object. Sets up the application context.
 - `index.js`: Renders `App.js`
 
-### /BKT
+### ./models/BKT
 
-- `BKTBrains.js`: Contains `update` function that implements the standard BKT update algorithm.
+- `BKT-brain.js`: Contains `update` function that implements the standard BKT update algorithm.
+- `problem-select-heuristics/*.js`: These files contain a configurable heuristic for adaptive
+  problem selection. The default heuristic iterates across the problems and chooses the one with the lowest average
+  probability of mastery across all of its knowledge components, but this can be changed to any heuristic depending
+  on the problem information and the previously completed problems.
 
-### /ProblemLayout
+### ./components
+
+- `Firebase.js`: Class with methods to read/write to Firebase (Cloud Firestore).
+
+### ./components/problem-layout
 
 - `HintSystem.js`: Expandable panel component to display all the hints.
 
@@ -104,7 +148,7 @@ website for more info on this syntax.
 
 - `problemCardStyles.js`: This file contains all the styles for `ProblemCard.js`
 
-### /ProblemLogic
+### ./platform-logic
 
 - `checkAnswer.js`: Function to check answers. 3 different types of answers are supported: Algebraic, String, Numeric.
   Algebraic will simplify numeric expressions, numeric checks numeric equivalence, string requires answers to exactly
@@ -118,12 +162,11 @@ website for more info on this syntax.
 
 - `renderText.js`: Method called to render text. Fills in dynamic text generation.
 
-### /ProblemPool [Configurable]
+### ./content-sources [Configurable]
 
-- Each problem is contained in its own folder.
-- Problems can contain steps which are contained in their own sub-folder.
-- Steps can contain hints which are stored as pathways in the `tutoring` sub-folder.
-- All problems are pre-processed before being ingested by the frontend platform. All problems are accumulated in the `src/generated/flatProblemPool.json` file prior to each run or build.
+- Each sub-folder can be considered its own isolated content source.
+  -  `oatutor` contains OATutor-curated content but can be removed if the content is not being used.
+- See the [Content Source](#oatutor-content-pool) section for more details.
 
 #### Markdown Support
 
@@ -131,28 +174,14 @@ website for more info on this syntax.
 - Wrap Latex in `$` for inline LaTeX
 - Newlines can be created with `\n`, escaped as `\\n`
 
-### /config [Configurable]
+### ./config [Configurable]
 
 - `config.js`: Central place where options can be configured. Also includes function to get the treatment id given a
   userID, imports all appropriate treatments (Ex. BKTParam, HintPathway, Adaptive Problem selection heuristic)
 
-- `./bktParams/bktParams.js`: Contains the mastery, transit, slip, and guess probabilities for each skill. Used in the
-  BKT model.
-- `./problemSelectHeuristics/problemSelectHeuristic.js`: This file contains a configurable heuristic for adaptive
-  problem selection. The default heuristic iterates across the problems and chooses the one with the lowest average
-  probability of mastery across all of its knowledge components, but this can be changed to any heuristic.
+- `firebaseConfig.js`: File containing firebase set up configuration.
 
-- `skillModel.json`: This file contains all the problem to skill mappings. The format is as follows:
-
-```json5
-{
-    problemID1a: ['skill1', 'skill2'],
-    problemID1b: ['skill2', 'skill3'],
-    // ...
-}
-```
-
-### /tools [Optional]
+### ./tools [Optional]
 
 Data parsing and spreadsheet populating tools are stored in `src/tools`. If you would
 like to use any of the tools in this directory, the following steps must be taken to
@@ -178,7 +207,7 @@ of your choosing.
 6. Share the target spreadsheet with that email address and give them editor access
 7. Create `.env.local` in `src/tools` and add this line `SPREADSHEET_ID=YOUR_SPREADSHEET_ID_HERE`
 8. If your school runs on a quarter system, you may change the first line in
-   `src/config/shared-config.js` to `QUARTER`
+   `common/global-config.js` to `QUARTER`
 
 From the `src/tools` directory, `node populateGoogleSheets.js`
 
@@ -187,7 +216,7 @@ From the `src/tools` directory, `node populateGoogleSheets.js`
 This tool requires no additional set up, and allows you to download a CSV of the Firebase
 collections.
 
-### /util
+### ./util
 
 Contains common helper methods for the frontend React app.
 
@@ -228,11 +257,41 @@ DO_FOCUS_TRACKING = false;
    listener logs.
 4. Configure buffer size and granularity of logging
 
-## Problem Pool<a id='oatutor-content'></a>
+## Content Sources <a id='oatutor-content-pool'></a>
 
-### Adding a problem to the Problem Pool
+- OATutor can support multiple content sources simultaneously, compartmentalizing courses, lessons, and problems of
+  different topics
+- Currently, the `oatutor` content source is included in this repository as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
+  to enable separate versioning
+- However, content sources can be copied in as entire folders as well and committed to this repository
 
-1. Create a folder in `/src/ProblemPool/` for that problem (Ex. `circle1`)
+### Content Source Directory Structure
+#### ./content-pool
+- Each _problem_ is contained in its own folder.
+- Problems can contain _steps_ which are contained in their own sub-folder.
+- Steps can contain _hints_ which are stored as _pathways_ in the `tutoring` sub-folder.
+- All problems are pre-processed before being ingested by the frontend platform. 
+  All problems are accumulated in the `generated/processed-content-pool/[source_name].json` file prior to each run or build.
+
+#### ./bkt-params
+- `bktParams.js`: Contains the mastery, transit, slip, and guess probabilities for each skill. Used by the BKT model.
+
+#### Meta / Tagging files
+- `skillModel.json`: This file contains all the problem to skill mappings. The format is as follows:
+```json5
+{
+    problemID1a: ['skill1', 'skill2'],
+    problemID1b: ['skill2', 'skill3'],
+    // ...
+}
+```
+- `coursePlans.json`: This file contains all of the _courses_ relating to this content source. Each course specified in
+  this file is associated with multiple _lessons_. See the [creating lesson plans](#creating-lesson-plans) section for
+  more details.
+
+### Adding a problem to the Content Pool
+
+1. Create a folder in `./content-pool` for that problem (Ex. `circle1`)
 2. Create a metadata json file for that problem id (Ex. `circle1.json`)
 3. Create a folder called `figures` if the problem has image figures
 4. Create a sub-folder for each problem step (Ex. `circle1a`, `circle1b`)
@@ -240,9 +299,9 @@ DO_FOCUS_TRACKING = false;
    1. Ensure that the step name matches the folder name
 6. Create a sub-folder within the step's sub-folder called `tutoring`
 7. Place each hint pathway within the folder (Ex. `circle1aDefaultPathway.json`)
-8. In `/src/config/skillModel.json`, tag each problem with the appropriate skills
-9. If the skill does not already exist in `bktParams`, add its BKT parameters in the appropriate `config/bktParams`
-   files
+8. In `./skillModel.json`, tag each problem with the appropriate skills
+9. If the skill does not already exist in `bktParams` and you are using the BKT model, add its BKT parameters in the 
+   appropriate `bkt-params/bktParams.json` files
 
 ### Types of problems
 
@@ -254,22 +313,28 @@ DO_FOCUS_TRACKING = false;
 ### Example Directory Structure
 
 ```
-ProblemPool
-└───circle1
-│   │   circle1.json
-│   └───steps
-│       └───circle1a
-│       │   │   circle1a.json
-│       │   └───tutoring
-│       │       │   circle1aDefaultPathway.json
-│       │          
-│       └───circle1b
-│           │   circle1b.json
-│           └───tutoring
-│               │   circle1bDefaultPathway.json
-│   
-└───slope1
-    │   ...
+content-sources/
+└── oatutor [submodule]/
+    ├── bkt-params/
+    │   ├── bktParams1.json
+    │   └── bktParams2.json
+    ├── content-pool/
+    │   ├── circle1/
+    │   │   ├── circle1.json
+    │   │   └── steps/
+    │   │       ├── circle1a/
+    │   │       │   ├── circle1a.json
+    │   │       │   └── tutoring/
+    │   │       │       └── circle1aDefaultPathway.json
+    │   │       └── circle1b/
+    │   │           ├── circble1b.json
+    │   │           └── tutoring/
+    │   │               └── circle1bDefaultPathway.json
+    │   └── slope1/
+    │       ├── slope1.json
+    │       └── ...
+    ├── coursePlans.json
+    └── skillModel.json
 ```
 
 ### Example Problem File
@@ -347,31 +412,9 @@ ProblemPool
 }
 ```
 
-### ~~Using HTML/React Objects as body text for LaTeX~~ [Deprecated]
+### Creating Lesson Plans <a id="creating-lesson-plans"><a/>
 
-```jso
-import hints from './pythag1a-index.js';
-import React from 'react';
-import { InlineMath } from 'react-katex';
-
-const step = {
-    id: 'pythag1a',
-    stepTitle: "1. Vertical Component",
-    stepBody: <div>
-        What is the net force<InlineMath math={"\\sum F_y "}/>, in the vertical direction?
-    </div>,
-    stepAnswer: ["0.10"],
-    problemType: "TextBox",
-    answerType: "algebra",
-    hints: hints
-}
-
-export { step };
-```
-
-### Creating Lesson Plans
-
-* Create a lesson plan by making a new item in `config/coursePlans.json`
+* Create a lesson plan by making a new item in `[content_source]/coursePlans.json`
 * Each lesson plan has learning objectives which you can also list the target mastery level
 * Lesson plans can have multiple learning objectives (for cumulative review)
 * Users select a lesson upon visiting the site
@@ -389,33 +432,106 @@ export { step };
 }
 ```
 
-### Creative Commons Attribution
-
-This repository includes three creative commons (CC BY) textbooks worth of algebra problems with tutoring supports in 
-the form of hints and scaffolds, authored and edited by the OAT project.
-
-1. A subset of problems are derivatives of _OpenStax: Elementary Algebra_ by OpenStax, used under CC
-   BY 4.0
-2. A subset of problems are derivatives of _OpenStax: Intermediate Algebra_ by OpenStax, used under CC
-   BY 4.0
-3. A subset of problems are derivatives of _Openstax: College Algebra_ by OpenStax, used under CC
-   BY 4.0
-
-Upon release, our provided content pool will therefore also have the most permissive “CC BY” license.
-
 ## Research
 
 ### AB testing
 OATutor was designed with the research case in mind and thus supports AB testing for many features. The benefit of the
 open source nature of the platform allows researchers to insert AB testing logic into any part of the platform they
-would like. To show that this is possible, we have included several examples of how one could use AB testing. One
-example is to include different heuristics for problem selection. One heuristic is to choose problems with a knowledge
+would like. To show that this is possible, we have included several examples of how one could use AB testing. 
+
+AB testing is conducted by randomly assigning users into one of two groups. The treatment split is 50/50 by default,
+but it can be easily changed to a different split percentage or more than two splits. The userID is recorded in all data
+logs to infer the treatment.
+
+```js
+// src/App.js
+this.userID = generateRandomInt().toString();
+getTreatment = () => {
+    return this.userID % 2;
+}
+
+getTreatmentObject = (targetObject) => {
+    return targetObject[this.getTreatment()]
+}
+```
+
+#### Problem Selection Heuristics
+One example is to include different heuristics for problem selection. One heuristic is to choose problems with a knowledge
 component that is lowest (meaning the student is weakest in this subject) to round out the student's knowledge. Another
-heuristic is to choose problems with a knowledge ocmponent that is highest (meaning the student is strongest in this
-subject) to fully master a skill before moving on to another. There is control logic detailed in App.js to select
-between the two heuristics depending on a randomly generated userID. The userID is recorded in data logs so the
-treatment can be inferred from this. Other examples of AB testing included are different BKT parameter files and
-different default hint pathways.
+heuristic is to choose problems with a knowledge component that is highest (meaning the student is strongest in this
+subject) to fully master a skill before moving on to another. New heuristic files can be added to the appropriate folder (see
+below code snippet) and imported accordingly to be used.
+
+```js
+// src/App.js
+import { heuristic as lowestHeuristic } from './models/BKT/problem-select-heuristics/problemSelectHeuristic1.js';
+import { heuristic as highestHeuristic } from './models/BKT/problem-select-heuristics/problemSelectHeuristic2.js';
+
+...
+const treatmentMapping = {
+    heuristic: {
+        0: lowestHeuristic,
+        1: highestHeuristic
+    },
+}
+```
+
+#### BKT Parameters
+Different BKT parameters can also be used in AB testing. New bktParam files can be added to the appropriate folder (see
+below code snippet) and imported accordingly to be used.
+
+```js
+// src/App.js
+import bktParams1 from './content-sources/oatutor/bkt-params/bktParams1.json';
+import bktParams2 from './content-sources/oatutor/bkt-params/bktParams2.json';
+
+...
+const treatmentMapping = {
+    bktParams: {
+        0: cleanObjectKeys(bktParams1),
+        1: cleanObjectKeys(bktParams2)
+    },
+}
+```
+
+#### Hint Pathways
+Most content in the OATutor-Content repository currently only contains one hint pathway (the `defaultPathway`), but 
+additional hint pathways can easily be added. AB testing can be done with multiple hint pathways for efficacy tests. 
+New hint pathway files can be added to the tutoring folder of within a step.
+
+```js
+// src/App.js
+const treatmentMapping = {
+    hintPathway: {
+        0: "DefaultPathway",
+        1: "YourNewPathwayHere"
+    }
+}
+```
+
+Example content directory with multiple hint pathways:
+```
+content-sources/
+└── oatutor [submodule]/
+    ├── content-pool/
+    │   ├── circle1/
+    │   │   ├── circle1.json
+    │   │   └── steps/
+    │   │       ├── circle1a/
+    │   │       │   ├── circle1a.json
+    │   │       │   └── tutoring/
+    │   │       │       ├── circle1aDefaultPathway.json
+    │   │       │       └── circle1aYourNewPathwayHere.json  <--- Add your new pathway here
+    │   │       └── circle1b/
+    │   │           ├── circble1b.json
+    │   │           └── tutoring/
+    │   │               ├── circle1bDefaultPathway.json
+    │   │               └── circle1bYourNewPathwayHere.json  <--- Add your new pathway here
+    │   └── slope1/
+    │       ├── slope1.json
+    │       └── ...
+    ├── ...
+```
 
 ### Details of KC model Description (how it works/format)
 Knowledge components (KCs) are assigned at the step level in the file skillModel.json. A KC is defined as a string that
@@ -449,3 +565,15 @@ masteries together to get the problem mastery. The heuristic will be applied, wh
 first, so the problem with the lowest mastery is selected to give to the user. In the case that the first problem is
 being chosen in the session, equation a from the BKT model is used and the default probMastery is considered the user's
 mastery. Ties (of equal mastery) in the heuristic selection algorithm are broken by randomly choosing a problem.
+
+### Supported Meta Tags
+- **giveStuFeedback:** controls correctness feedback (i.e. whether a user inputted the correct answer or not)
+- **giveStuHints:** controls whether hints should be displayed or not (i.e. controls the hint icon as well)
+- **doMasteryUpdate:** controls whether OATutor should track student mastery
+- **allowRecycle:** controls whether problems/steps can be repeated or not
+- **showStuMastery:** controls whether matters should be displayed to the user in the upper right corner
+- **unlockFirstHint:** controls whether the first hint should be auto-expanded when the user clicks the hint icon
+- **allowDynamicHint:** controls whether a dynamically generated hint should be given to the user
+- **giveStuBottomHint:** controls whether the suer should receive a bottom-out hint (last hint in the hint pathway that contains the answer)
+- **giveHintOnIncorrect:** controls whether an incorrect response should automatically force the user into the hint pathway
+- **keepMCOrder:** controls whether to preserve the order of MCQ choices in the spreadsheet
