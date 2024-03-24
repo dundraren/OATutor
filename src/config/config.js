@@ -10,11 +10,6 @@ const SITE_VERSION = "1.5.1";
 
 const CURRENT_SEMESTER = calculateSemester(Date.now());
 
-/**
- * If user does not access the website through Canvas, show a warning (for the first time).
- * @type {boolean}
- */
-const SHOW_NOT_CANVAS_WARNING = false;
 
 /**
  * If user does not access the website through Canvas, show a warning (for the first time).
@@ -70,16 +65,10 @@ const _SHORT_SITE_NAME = SITE_NAME.toLowerCase()
     .replace(/[^a-z]/g, "")
     .substr(0, 16);
 
-<<<<<<< HEAD
-const USER_ID_STORAGE_KEY = `${_SHORT_SITE_NAME}-user_id`
-const PROGRESS_STORAGE_KEY = `${_SHORT_SITE_NAME}-progress`
-export const LESSON_PROGRESS_STORAGE_KEY = lessonId => `${_SHORT_SITE_NAME}-progress-${lessonId}`
-=======
 const USER_ID_STORAGE_KEY = `${_SHORT_SITE_NAME}-user_id`;
 const PROGRESS_STORAGE_KEY = `${_SHORT_SITE_NAME}-progress`;
 export const LESSON_PROGRESS_STORAGE_KEY = (lessonId) =>
     `${PROGRESS_STORAGE_KEY}-${lessonId}`;
->>>>>>> 56e51aacdc4c4a08f3010436c8544fddb43d5446
 
 const CANVAS_WARNING_STORAGE_KEY = `${_SHORT_SITE_NAME}-canvas-warning-dismissed`;
 
