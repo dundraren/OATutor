@@ -1,9 +1,9 @@
-{
+{ 
     "lessonSelection": 
     {
-       "welcomeInstructor": "Välkommen Instruktör!",
+       "welcomeInstructor": "Välkommen instruktör!",
        "welcomeTo": "Välkommen till",
-       "resetprogress": "Återställ Framsteg",
+       "resetprogress": "Återställ framsteg",
        "select": "Vänligen välj en",
        "course": "kurs",
        "lessonplan": "lektionsplan",
@@ -11,20 +11,20 @@
     },
     "problem":
     {
-        "NextProblem": "Nästa Problem",
-        "PreviousProblem": "Föregående Problem",
-        "Submit": "Skicka in",
+        "NextProblem": "Nästa problem",
+        "PreviousProblem": "Föregående problem",
+        "Submit": "Svara",
         "Feedback": "Återkoppling",
         "Response": "Svar",
         "Thanks": "Tack för din återkoppling!",
-        "Description": "Känn dig fri att skicka återkoppling om detta problem om du stöter på några fel. Skicka återkoppling för alla delar av problemet på en gång.",
-        "Derivative": "är en härledning av",
-        "Used": ", används under"
+        "Description": "Tveka inte att skicka in återkoppling gällande detta problem om du stöter på några fel. Skicka återkoppling för alla delar av problemet samtidigt.",
+        "Derivative": "",
+        "Used": ""
     },
     "platform":
     {
-        "Mastery": "Behärskning: ",
-        "LoggedIn": "Inte inloggad"
+        "Mastery": "Färdighetsnivå: ",
+        "LoggedIn": "Utloggad"
     },
     "hintsystem": 
     {
